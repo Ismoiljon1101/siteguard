@@ -2,6 +2,8 @@
 
 All tasks start as **planned**. The initial repository contains documentation only. Work proceeds by completion gates, not by invented dates; the course presentation target is Week 15.
 
+Use [BUILD_STAGES.md](BUILD_STAGES.md) to execute these roadmap tasks as smaller AI-agent assignments. Its A00-A16 cards specify dependencies, allowed files, checks, and human acceptance. Use [AGENT_TASK_TEMPLATE.md](AGENT_TASK_TEMPLATE.md) for each assignment; the S00-S13 tasks below remain the milestone-level plan.
+
 Ismoiljon is TL and the temporary owner of unfilled third-member tasks. The team can reassign those tasks after the roster is confirmed.
 
 ## Milestones

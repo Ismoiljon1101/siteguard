@@ -11,6 +11,8 @@ We will build one physical helmet that reports temperature, humidity, accelerati
 | Document | What it covers |
 | --- | --- |
 | [Roadmap](docs/ROADMAP.md) | Build order, task owners, dependencies, and completion criteria |
+| [Build stages](docs/BUILD_STAGES.md) | Small agent-ready implementation tasks, file ownership, and acceptance gates |
+| [Agent task template](docs/AGENT_TASK_TEMPLATE.md) | Copyable task prompt and reviewer handoff |
 | [System design](docs/SYSTEM_DESIGN.md) | Components, Java boundaries, incident states, and storage |
 | [Message protocol](docs/PROTOCOL.md) | Shared firmware/Java contract and delivery rules |
 | [Team plan](docs/TEAM_PLAN.md) | TL responsibilities, ownership, and team decisions |

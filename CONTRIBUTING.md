@@ -6,6 +6,8 @@ Ismoiljon Masharipov is the team lead. The team follows the ownership and review
 
 Choose a task from [ROADMAP.md](docs/ROADMAP.md). Confirm the owner, dependencies, and completion criteria with the TL. A contributor can create a GitHub issue using the task template and reference the roadmap ID, such as S04. Keep one active implementation task per person unless a hardware delivery is blocking it.
 
+For AI-assisted implementation, choose the corresponding card from [BUILD_STAGES.md](docs/BUILD_STAGES.md), read [AGENTS.md](AGENTS.md), and use the [agent task template](docs/AGENT_TASK_TEMPLATE.md). Assign one bounded stage per session. Isolate concurrent work in separate branches/worktrees and keep shared contracts under TL review. The human owner must understand, verify, and explain the resulting code.
+
 ## Branch and pull request process
 
 1. Create a short branch, such as `feat/s04-serial-input` or `docs/protocol-v1`.
