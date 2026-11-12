@@ -15,6 +15,7 @@ We will build one physical helmet that reports temperature, humidity, accelerati
 | [Message protocol](docs/PROTOCOL.md) | Shared firmware/Java contract and delivery rules |
 | [Team plan](docs/TEAM_PLAN.md) | TL responsibilities, ownership, and team decisions |
 | [Hardware plan](docs/HARDWARE.md) | Parts to obtain, assembly stages, and mounting |
+| [Shopping list](docs/SHOPPING_LIST.md) | Exact models, retailer options, tools, spare parts, and budget limits |
 | [Test plan](docs/TEST_PLAN.md) | Acceptance targets and the evidence needed to claim them |
 | [Contributing](CONTRIBUTING.md) | Branches, pull requests, reviews, and integration |
 
