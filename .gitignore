@@ -1,0 +1,47 @@
+# Local settings and credentials
+.env
+.env.*
+!.env.example
+*.local.properties
+secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+mosquitto.passwd
+
+# Java builds and IDE state
+target/
+build/
+out/
+.gradle/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Firmware build artifacts
+.pio/
+*.elf
+*.bin
+*.map
+
+# Local databases and raw captures
+data/
+captures/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.log
+
+# Local course submissions, including student IDs
+submission/
+proposal-private/
+
+# OS files
+Thumbs.db
+.DS_Store
