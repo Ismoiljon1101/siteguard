@@ -2,6 +2,8 @@
 
 All tests below are **not run**. Targets describe planned acceptance criteria, not measured results. Update each result only after running the scenario on a recorded revision.
 
+Use the [November 13 budget design](HARDWARE.md): S3, onboard RGB/runtime BOOT SOS, and active-low buzzer. Before T03, verify actual GPIOs, inactive buzzer startup, BOOT release before reset/flashing, serial reconnect, and SOS enclosure access. Add an external button if access fails. Received-board checks are required; cart photos are not test evidence.
+
 ## Test matrix
 
 | ID | Scenario | Expected result | Initial owner |

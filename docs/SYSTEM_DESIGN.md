@@ -2,6 +2,8 @@
 
 This is the proposed design. Validate it through the roadmap milestones and record changes as the team learns from the hardware.
 
+The November 13 [budget hardware plan](HARDWARE.md) selects S3 N16R8, AHT20/BMP280, LIS3DH, onboard RGB/BOOT, and active-low buzzer. These replace earlier external indicator/button and passive-buzzer purchases. Verify the clone pin map, USB behavior, and button access. Java boundaries, incident workflow, protocol, and independent local alarms remain the same.
+
 ## Components
 
 ```mermaid
@@ -9,8 +11,8 @@ flowchart TB
     subgraph Helmet["One physical helmet"]
         Env["AHT20: temperature / humidity"] --> Firmware["ESP32 firmware"]
         Motion["LIS3DH: acceleration"] --> Firmware
-        Button["SOS button"] --> Firmware
-        Firmware --> Local["Local buzzer and LEDs"]
+        Button["Runtime BOOT/SOS button"] --> Firmware
+        Firmware --> Local["Active buzzer + onboard RGB LED"]
     end
     Firmware <-->|"USB serial initially"| Serial["Serial adapter"]
     Firmware <-->|"Wi-Fi / MQTT"| Broker["Local Mosquitto broker"]
@@ -121,7 +123,7 @@ Java may send a versioned configuration command. Firmware validates supported va
 
 ## References
 
-- [ESP32-DevKitC board guide](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html)
+- [ESP32-S3-DevKitC-1 reference-board guide](https://docs.espressif.com/projects/esp-idf/en/v4.4.3/esp32s3/hw-reference/esp32s3/user-guide-devkitc-1.html); verify the purchased clone's revision.
 - [Espressif MQTT documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/mqtt.html) for protocol capabilities; this does not choose the Arduino firmware library.
 - [Eclipse Paho Java](https://eclipse.dev/paho/clients/java/index.html)
 - [Mosquitto authentication](https://mosquitto.org/documentation/authentication-methods/)

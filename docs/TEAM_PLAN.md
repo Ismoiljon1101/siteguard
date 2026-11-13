@@ -37,6 +37,7 @@ If a task is blocked, state what is needed and identify independent work that ca
 | Firmware environment | Arduino IDE with ESP32 support; verify MQTT library capabilities | Jakhongir |
 | Development network | Laptop and helmet on a shared local network | Jakhongir + Ismoiljon |
 | Parts and mounting | Check exact module variants before purchase | Jakhongir |
+| Budget | KRW 100,000 total; November 13 minimal AliExpress list with cash reserve | Ismoiljon + Jakhongir |
 | GitHub access | Collect teammate GitHub handles before inviting collaborators | Ismoiljon |
 
 ## Scope decisions

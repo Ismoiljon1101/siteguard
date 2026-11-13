@@ -6,6 +6,8 @@ Smart construction helmet monitoring with an ESP32 and a Java desktop applicatio
 
 We will build one physical helmet that reports temperature, humidity, acceleration, and SOS events. A Java operator console will show device health and store incident records. Local helmet alarms will keep working when the laptop or network is unavailable.
 
+The [November 13 budget redesign](docs/SHOPPING_LIST.md) targets KRW 100,000 including tools: ESP32-S3 N16R8, AHT20/BMP280, LIS3DH, and a small active buzzer. Use onboard RGB and runtime BOOT SOS for the controlled prototype after verifying pinout/access. The reviewed AliExpress cart estimate was KRW 88,115 including displayed shipping; prices and delivery remain subject to checkout. Nothing has been purchased.
+
 ## Project plan
 
 | Document | What it covers |
@@ -35,8 +37,8 @@ Until the third member is confirmed, Ismoiljon owns that work and may split indi
 
 ```mermaid
 flowchart LR
-    Sensors["AHT20 + LIS3DH + SOS button"] --> ESP["ESP32 firmware"]
-    ESP --> Alarm["Local buzzer + LEDs"]
+    Sensors["AHT20 + LIS3DH + onboard BOOT/SOS"] --> ESP["ESP32-S3 firmware"]
+    ESP --> Alarm["Active buzzer + onboard RGB LED"]
     ESP <-->|"Local Wi-Fi / MQTT"| Broker["Mosquitto on laptop"]
     Broker <-->|"Readings, events, receipts, configuration"| Java["Java application"]
     ESP <-->|"USB serial: first integration and fallback"| Java

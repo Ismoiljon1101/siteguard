@@ -2,6 +2,8 @@
 
 This is the execution breakdown of [ROADMAP.md](ROADMAP.md), not a new scope. Every stage below is **planned**. No implementation, build, or hardware result is implied. Ismoiljon accepts stage gates as TL; Jakhongir owns firmware and hardware decisions. The third member remains unconfirmed.
 
+The November 13 budget redesign supersedes earlier part quantities/models. Read [HARDWARE.md](HARDWARE.md) and the exact [cart list](SHOPPING_LIST.md): S3 N16R8, onboard RGB/BOOT, AHT20/BMP280, LIS3DH, and active-low buzzer. Preserve Java scope and the draft wire schema. S3 GPIO/USB behavior and control access require A00/A08 verification; shopping does not accept a build gate.
+
 Give an agent one stage card using [AGENT_TASK_TEMPLATE.md](AGENT_TASK_TEMPLATE.md). Read [AGENTS.md](../AGENTS.md) first. Agents assist the accountable team member; using an agent does not change human ownership or the requirement to explain the code.
 
 ## Build order
@@ -113,9 +115,9 @@ Tests mirror the relevant packages under `desktop/src/test/java/`. An agent chan
 
 - **Roadmap:** S02. **Owner:** Jakhongir. **Depends on:** A00, actual boards, and lab tools; independent of Java stages.
 - **Scope:** `firmware/`, `config/firmware/`, wiring/pin-map documentation, sanitized bench evidence.
-- **Deliver:** record exact board, toolchain, libraries, pins, power, I2C addresses, measured motion sampling, and configured ranges. Read both sensors; debounce SOS; generate local LEDs and DFR0032 PWM buzzer alarms without Java. Emit protocol-valid JSON lines with unique boot/sequence identity; parse Java receipts without blocking sampling. Include sensor-fault reporting.
+- **Deliver:** record the actual S3 N16R8 target, flash/PSRAM settings, USB interface, toolchain, libraries, GPIOs, power, I2C addresses, motion sampling, and ranges. Read both sensors; debounce runtime BOOT SOS; drive onboard RGB and active-low buzzer without Java. Verify bootloader behavior and SOS access; add an external button if access fails. Emit protocol-valid JSON lines with unique boot/sequence identity; parse Java receipts without blocking sampling. Include sensor faults and a safe buzzer startup state.
 - **Gate:** compile for the selected board; human-supervised bench checks read each sensor, show disconnected-sensor behavior, and trigger local SOS without laptop connectivity. Confirm serial messages match A00 fixtures. Record real results and local reset behavior. Agents must not claim wiring/measurements based on compilation alone.
-- **Read:** [SHOPPING_LIST.md](SHOPPING_LIST.md), hardware plan, protocol, test plan. Keep the spare set disconnected.
+- **Read:** [SHOPPING_LIST.md](SHOPPING_LIST.md), hardware plan, protocol, test plan. Solder loose sensor headers. Spare buzzers stay disconnected; no duplicate controller/sensor set is in the cart.
 
 ### A09 — Implement and test the Java serial adapter
 
