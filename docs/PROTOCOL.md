@@ -84,7 +84,7 @@ If storage fails, do not send `stored`. Preserve the local helmet alarm and show
 
 Plan for QoS 0 telemetry and QoS 1 events/receipts, without retained telemetry or event messages. The selected firmware client must support outbound QoS 1; confirm this in S07. Protocol-level delivery does not replace database deduplication or the Java receipt.
 
-Reject a message when its payload device ID does not match its topic. Last-will messages may help connection display but cannot prove current sensor data is valid. Configure allowed devices explicitly for the single-device baseline.
+Reject a message when its payload device ID does not match its topic. Last-will messages may help connection display but cannot prove current sensor data is valid. Configure allowed devices explicitly and isolate identities, state, and deduplication per helmet. The multi-worker expansion is planned; review and update protocol examples and fixtures before implementation.
 
 ## Configuration commands
 

@@ -2,7 +2,7 @@
 
 All tests below are **not run**. Targets describe planned acceptance criteria, not measured results. Update each result only after running the scenario on a recorded revision.
 
-Use the [November 13 budget design](HARDWARE.md): S3, onboard RGB/runtime BOOT SOS, and active-low buzzer. Before T03, verify actual GPIOs, inactive buzzer startup, BOOT release before reset/flashing, serial reconnect, and SOS enclosure access. Add an external button if access fails. Received-board checks are required; cart photos are not test evidence.
+Use the [November 14 hardware selection](HARDWARE.md): S3, onboard RGB, external PBS-33B SOS button, and active-low buzzer. Before T03, verify actual GPIOs, a suitable non-strapping SOS input, debounce, inactive buzzer startup, startup/reset with SOS held and released, programming behavior, serial reconnect, and mounted SOS access. Received-board checks are required; a reported order and cart photos are not test evidence.
 
 ## Test matrix
 
@@ -24,6 +24,8 @@ Use the [November 13 budget design](HARDWARE.md): S3, onboard RGB/runtime BOOT S
 | T14 | Test configuration and threshold boundaries | Unsupported settings are rejected; accepted version is visible; sustained-warning rule avoids repeated warnings | Ismoiljon + Jakhongir |
 | T15 | Compare CSV export to stored incidents | Values, IDs, states, timestamps, and notes agree with the database; quoting is correct | Ismoiljon |
 | T16 | Run on power bank with mounted electronics | Record runtime and any shutoff/restart; button remains accessible and mounts remain secure | Jakhongir |
+| T17 | Run ten labeled simulated helmets with worker assignments | Each worker has independent readings, health, incidents, and history; reassignment preserves historical association | Ismoiljon |
+| T18 | Run separate Java service and dashboard on a private LAN | Concurrent devices remain isolated; restart recovers history and unauthorized client/device access is rejected | Ismoiljon |
 
 The third member may take over storage, replay, and evidence tasks after an explicit handoff. Do not assign a GitHub user or claim a contribution before confirming it.
 
@@ -51,7 +53,7 @@ Publish only sanitized captures in `evidence/`. Keep local databases, passwords,
 
 Before claiming offline replay, fill the queue past its configured capacity, disconnect/reconnect repeatedly, replay duplicates, and test the specified behavior after power loss. Record dropped events and the overflow policy. A RAM queue must not be described as power-loss durable.
 
-Before claiming multiple-device support, run ten clearly labeled simulated devices with overlapping sequence numbers but separate device and boot identities. Verify independent health and incident histories. This does not demonstrate ten physical helmets.
+Before claiming multiple-device support, run ten clearly labeled simulated devices with overlapping sequence numbers but separate device and boot identities. Verify independent health, worker assignment history, and incident histories. This does not demonstrate ten physical helmets or establish production capacity.
 
 Before claiming TLS or topic isolation, show valid clients connecting and invalid certificates, credentials, or topic access being rejected under the documented configuration.
 

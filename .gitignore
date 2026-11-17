@@ -15,6 +15,7 @@ target/
 build/
 out/
 .gradle/
+.maven-cache/
 .idea/
 *.iml
 .classpath

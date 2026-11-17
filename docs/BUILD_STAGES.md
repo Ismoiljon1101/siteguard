@@ -1,8 +1,8 @@
 # Build stages for team and AI-agent work
 
-This is the execution breakdown of [ROADMAP.md](ROADMAP.md), not a new scope. Every stage below is **planned**. No implementation, build, or hardware result is implied. Ismoiljon accepts stage gates as TL; Jakhongir owns firmware and hardware decisions. The third member remains unconfirmed.
+This is the execution breakdown of [ROADMAP.md](ROADMAP.md), not a new scope. Every stage gate below remains **unaccepted**. A provisional Java simulation prototype exists; its partial implementation and checks are listed in [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md). No hardware result is implied. Ismoiljon accepts stage gates as TL; Jakhongir owns firmware and hardware decisions. The third member remains unconfirmed.
 
-The November 13 budget redesign supersedes earlier part quantities/models. Read [HARDWARE.md](HARDWARE.md) and the exact [cart list](SHOPPING_LIST.md): S3 N16R8, onboard RGB/BOOT, AHT20/BMP280, LIS3DH, and active-low buzzer. Preserve Java scope and the draft wire schema. S3 GPIO/USB behavior and control access require A00/A08 verification; shopping does not accept a build gate.
+The November 14 order selection supersedes earlier part quantities/models. Read [HARDWARE.md](HARDWARE.md) and the exact [order selections](SHOPPING_LIST.md): S3 N16R8 with onboard RGB, AHT20/BMP280, LIS3DH, active-low buzzer, and an external PBS-33B SOS button. One spare ESP32 and one spare LIS3DH are included. Ordering is reported by the TL; receipt/delivery and S3 GPIO/USB behavior still require verification. Preserve Java scope and the draft wire schema. Procurement does not accept A00/A08 or any build gate.
 
 Give an agent one stage card using [AGENT_TASK_TEMPLATE.md](AGENT_TASK_TEMPLATE.md). Read [AGENTS.md](../AGENTS.md) first. Agents assist the accountable team member; using an agent does not change human ownership or the requirement to explain the code.
 
@@ -14,8 +14,9 @@ Give an agent one stage card using [AGENT_TASK_TEMPLATE.md](AGENT_TASK_TEMPLATE.
 | 1 | A03, A04, A05, A06 | Simulator, SQLite, rules, and UI built against the same contracts |
 | Hardware lane | A08 after A00 and parts arrival | ESP32 reads sensors and runs local alarms without Java |
 | 2 | A07; A09 can follow A02 independently | Complete simulated Java app and tested serial adapter |
+| Multi-worker simulation | A07B after A07 | Multiple independently tracked simulated helmets, worker assignments, and a site overview |
 | 3 | A10 | One physical SOS travels through USB to a saved, manageable Java incident |
-| 4 | A11 and A12, then A13 | Same system works over Wi-Fi/MQTT and handles disconnects |
+| 4 | A11 and A12, then A11B and A13 | Multi-worker Java site service over Wi-Fi/MQTT, with a dashboard and disconnect handling |
 | 5 | A14, then A15 | Remaining baseline features, measured evidence, and presentation release |
 | Optional | A16 after A15 | One separately chosen extension at a time |
 
@@ -111,13 +112,21 @@ Tests mirror the relevant packages under `desktop/src/test/java/`. An agent chan
 - **Gate:** without hardware, start normal simulation, trigger warning/SOS, acknowledge and resolve with a note, restart Java, and recover history. Run baseline checks plus T01, T04, T05, T11, and the applicable simulated portion of T12/T13. Record what remains untested physically.
 - **Milestone:** Java can be demonstrated while hardware is in transit.
 
+### A07B — Multi-worker simulation and site overview
+
+- **Roadmap:** S03B. **Owner:** Ismoiljon; delegate disjoint tasks after A02/A07 contracts are reviewed. **Depends on:** A07.
+- **Scope:** simulated device lifecycle, worker/helmet assignment domain and persistence, per-device application state, Swing site overview, and focused tests. Coordinate any shared contracts and migrations with the TL first.
+- **Deliver:** run multiple distinctly identified simulated helmets through the same ingestion/rules path; associate each helmet with a demo worker or show it as unassigned. Show each helmet's air readings, sensor health, last update, and incidents. Keep assignment history, incidents, and faults isolated per worker/device. Label all simulated sources.
+- **Gate:** exercise at least ten simulated identities, including simultaneous events, same sequence numbers on different devices, worker reassignment, one stale/faulty source while others stay active, and restart recovery. Verify no cross-worker mixups. Record the actual test conditions; this is not evidence of ten physical helmets or a scale guarantee.
+- **Do not add:** GPS coordinates or claims of body-temperature measurement. Design location and any extra sensors as separate decisions.
+
 ### A08 — Bring up firmware and bench hardware
 
 - **Roadmap:** S02. **Owner:** Jakhongir. **Depends on:** A00, actual boards, and lab tools; independent of Java stages.
 - **Scope:** `firmware/`, `config/firmware/`, wiring/pin-map documentation, sanitized bench evidence.
-- **Deliver:** record the actual S3 N16R8 target, flash/PSRAM settings, USB interface, toolchain, libraries, GPIOs, power, I2C addresses, motion sampling, and ranges. Read both sensors; debounce runtime BOOT SOS; drive onboard RGB and active-low buzzer without Java. Verify bootloader behavior and SOS access; add an external button if access fails. Emit protocol-valid JSON lines with unique boot/sequence identity; parse Java receipts without blocking sampling. Include sensor faults and a safe buzzer startup state.
+- **Deliver:** record the actual S3 N16R8 target, flash/PSRAM settings, USB interface, toolchain, libraries, GPIOs, power, I2C addresses, motion sampling, and ranges. Read both sensors; debounce the external PBS-33B SOS button on a verified non-strapping input; drive onboard RGB and active-low buzzer without Java. Verify startup/reset with SOS held and released, programming/bootloader behavior, and mounted SOS access. Emit protocol-valid JSON lines with unique boot/sequence identity; parse Java receipts without blocking sampling. Include sensor faults and a safe buzzer startup state.
 - **Gate:** compile for the selected board; human-supervised bench checks read each sensor, show disconnected-sensor behavior, and trigger local SOS without laptop connectivity. Confirm serial messages match A00 fixtures. Record real results and local reset behavior. Agents must not claim wiring/measurements based on compilation alone.
-- **Read:** [SHOPPING_LIST.md](SHOPPING_LIST.md), hardware plan, protocol, test plan. Solder loose sensor headers. Spare buzzers stay disconnected; no duplicate controller/sensor set is in the cart.
+- **Read:** [SHOPPING_LIST.md](SHOPPING_LIST.md), hardware plan, protocol, test plan. Solder loose sensor headers. Keep the spare ESP32, spare LIS3DH, and spare buzzers disconnected; inspect faults before using replacements. Use the owned iron and borrowed meter after checking their actual condition/manuals.
 
 ### A09 — Implement and test the Java serial adapter
 
@@ -148,9 +157,17 @@ Tests mirror the relevant packages under `desktop/src/test/java/`. An agent chan
 - **Deliver:** local-network credentials via ignored configuration, reconnect without blocking local alarms, protocol topics, telemetry, events, receipts, and versioned command acceptance/rejection. Choose and pin a client that actually supports outbound QoS 1. Keep a serial fallback.
 - **Gate:** compile and human-run broker checks demonstrate event publication, matching receipt handling, idempotent configuration commands, and local SOS during a 30-second network outage. Do not claim historical delivery unless A16's queue work is completed.
 
+### A11B — Central Java site service and dashboard connection
+
+- **Roadmap:** S07B. **Owner:** Ismoiljon with team review. **Depends on:** A07B and A11; physical firmware is verified separately in A12/A13.
+- **Scope:** move ingestion, rules, worker assignment, incident persistence, and device state into a Java service. Define and document an authenticated dashboard API and live updates, with the Swing client calling it. Select and pin libraries only after interface review.
+- **Deliver:** run the service and broker on one site computer for the course demo; ingest multiple device identities through the existing protocol, expose per-worker status and incident actions, and make disconnects and storage failures visible. Keep local helmet alarms independent of the service. Prefer SQLite for the first single-service demo and assess alternatives only against measured needs.
+- **Gate:** start service and dashboard separately; demonstrate independent simulated sources, a persisted SOS, restart recovery, an unauthorized client/device rejection, and a disconnected source without affecting the others. Validate API compatibility and prevent cross-worker data leakage. Test on a private LAN; production TLS, access controls, operations, privacy, and capacity require separate evidence.
+- **Contract changes:** propose and review API, assignment, database, and protocol/fixture changes before implementation; do not silently modify the current wire schema.
+
 ### A13 — Integrate wireless behavior, health, and portable power
 
-- **Roadmap:** S08/S09; milestone M3. **Owner:** Ismoiljon + Jakhongir. **Depends on:** A11/A12.
+- **Roadmap:** S08/S09; milestone M3. **Owner:** Ismoiljon + Jakhongir. **Depends on:** A11B/A12.
 - **Scope:** bootstrap/integration checks, mounting notes, sanitized network/power evidence; coordinated fixes.
 - **Deliver:** same Java rules/database/UI over MQTT; explicit stale/offline recovery; current vs historical input handling; removable enclosure and power-bank demonstration. Keep operator acknowledgement separate from local alarm behavior.
 - **Gate:** repeat the wired incident workflow wirelessly, interrupt network for 30 seconds, show local SOS and stale Java state, reconnect with new live readings, and confirm no duplicate incident. Record power-bank runtime/shutoff observations and an unworn motion demo. Cover T06-T08, T10, T14, and T16 as applicable. Confirm GUI configuration shows acceptance or rejection, rather than assuming a publish applied it.
@@ -161,20 +178,20 @@ Tests mirror the relevant packages under `desktop/src/test/java/`. An agent chan
 - **Scope:** application query/export/replay services, UI history/trend/configuration controls, simulation/replay adapter, scenario fixtures and focused tests. Coordinate any port changes before editing.
 - **Deliver:** bounded trend queries from sampled history, incident filters, correct CSV export, controlled recorded-data replay, and complete versioned configuration controls. Replay uses the same rules and persistence boundaries with separate provenance/identity so it cannot corrupt live history. A replay does not publish a live hardware receipt or enter physical latency measurements.
 - **Gate:** CSV values and quoting match stored data, restart preserves history, malformed replay is rejected, replay is visibly labeled, and disconnected hardware stays disconnected during replay. Cover T13-T15 and rerun relevant incident/transaction checks after integration.
-- **Do not add:** ten-device claims, offline hardware queues, or cloud deployment.
+- **Do not add:** unmeasured physical fleet or capacity claims, offline hardware queues, or cloud deployment.
 
 ### A15 — Verify and prepare the course release
 
 - **Roadmap:** S11/S12; milestone M4. **Owner:** Ismoiljon coordinates; every confirmed teammate participates. **Depends on:** A14.
 - **Scope:** test fixes, setup/release docs, report materials, sanitized evidence. New features need a separate decision.
 - **Deliver:** clean-checkout setup, full [TEST_PLAN.md](TEST_PLAN.md) results, two or more real GUI screenshots, architecture/class explanation, simulation explanation, hardware diagram, contributor responsibilities, live demo script, and short recorded demo. Keep private course identity data outside the public repo.
-- **Gate:** run 100 physical SOS receipt trials under recorded conditions; include missing/late receipts and report actual percentiles without inventing success. Reproduce restart and failure cases. Each teammate explains their contribution and the full data flow. Record roster compliance, instructor scheduling exceptions, and actual course submission separately. No grade guarantee.
+- **Gate:** run 100 physical SOS receipt trials under recorded conditions; include missing/late receipts and report actual percentiles without inventing success. Demonstrate the multi-worker path with one physical helmet and separately labeled simulated devices, including A07B's independent-device checks. Reproduce restart and failure cases. Each teammate explains their contribution and the full data flow. Record roster compliance, instructor scheduling exceptions, and actual course submission separately. No grade guarantee.
 - **Release decision:** TL and teammate review the evidence. Tag or publish only when the active task authorizes it. List failures and unfinished work plainly.
 
 ### A16 — Optional extensions, separately assigned
 
 - **Roadmap:** S13; milestone M5. **Owner:** explicitly assigned by TL. **Depends on:** A15.
-- **Scope:** one approved extension per task: bounded offline queue/replay; ten simulated devices; or TLS/topic isolation.
+- **Scope:** one approved extension per task: bounded offline queue/replay; verified deployment-scale capacity; or TLS/topic isolation beyond the private-LAN prototype.
 - **Gate:** use the extension checks in the test plan. Document queue overflow and power-loss behavior, distinguish simulated from physical devices, or prove rejected unauthorized broker access. Rerun affected baseline checks. An unfinished extension must not destabilize the presentation release.
 
 ## Running a work session

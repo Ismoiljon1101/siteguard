@@ -2,34 +2,44 @@
 
 This is the proposed design. Validate it through the roadmap milestones and record changes as the team learns from the hardware.
 
-The November 13 [budget hardware plan](HARDWARE.md) selects S3 N16R8, AHT20/BMP280, LIS3DH, onboard RGB/BOOT, and active-low buzzer. These replace earlier external indicator/button and passive-buzzer purchases. Verify the clone pin map, USB behavior, and button access. Java boundaries, incident workflow, protocol, and independent local alarms remain the same.
+The November 14 [hardware selection](HARDWARE.md) uses S3 N16R8, AHT20/BMP280, LIS3DH, onboard RGB, an active-low buzzer, and an external PBS-33B SOS button. The intended product monitors many workers and helmets; the course prototype will use one physical helmet and labeled simulated helmets. The existing Java application supports only one simulated source and is not yet a central server. Verify the clone pin map, USB behavior, non-strapping SOS input, and mounted button access. The reported order does not demonstrate physical integration.
 
 ## Components
 
 ```mermaid
 flowchart TB
-    subgraph Helmet["One physical helmet"]
+    subgraph Helmet["Each physical helmet"]
         Env["AHT20: temperature / humidity"] --> Firmware["ESP32 firmware"]
         Motion["LIS3DH: acceleration"] --> Firmware
-        Button["Runtime BOOT/SOS button"] --> Firmware
+        Button["External PBS-33B SOS button"] --> Firmware
         Firmware --> Local["Active buzzer + onboard RGB LED"]
     end
+    Others["Other helmets with distinct IDs"] <-->|"Wi-Fi / MQTT"| Broker["Site Mosquitto broker"]
     Firmware <-->|"USB serial initially"| Serial["Serial adapter"]
-    Firmware <-->|"Wi-Fi / MQTT"| Broker["Local Mosquitto broker"]
+    Firmware <-->|"Wi-Fi / MQTT"| Broker
     Broker <-->|"Messages and receipts"| MQTT["Java MQTT adapter"]
-    subgraph Java["Java desktop application"]
+    subgraph Java["Planned Java site service"]
         Serial --> Ingest["Validation + source normalization"]
         MQTT --> Ingest
         Simulator["Simulator / replay"] --> Ingest
         Ingest --> Rules["Rules + incident service"]
         Rules --> Repository["Persistence interface"]
         Rules --> View["UI view models"]
-        View --> Swing["Swing dashboard"]
-        Swing --> Actions["Acknowledge / resolve / annotate"]
+        View --> API["Site API + live updates"]
+        API --> Actions["Acknowledge / resolve / annotate"]
         Actions --> Rules
         Repository --> DB[("SQLite")]
     end
+    Dashboard["Swing supervisor dashboard"] <-->|"Authorized site connection"| API
 ```
+
+**Target, not implemented:** the site runs a Java monitoring service and an MQTT broker on a site computer or server. Helmets connect over the site network; a Swing dashboard consumes the service's API and live updates. The transport for dashboard updates and API contract are still to be chosen and reviewed. A single local laptop may host all components for the course demo. SQLite is a starting point for that single service; deployment size, capacity, and any later database migration must be measured and justified. This is not a claim of production scale, internet availability, or independent services today.
+
+Each helmet has a unique device ID. A time-bounded assignment links that ID to one worker for the current shift; use fictional names in demos. The dashboard needs a worker list, per-helmet last reading, stale/offline state, sensor fault, SOS/motion incidents, and independent history. Reassignments must not relabel old incidents. A helmet without an assignment is shown as unassigned. Test duplicate and out-of-order messages independently per device. Limit access to worker data, protect device identities and credentials, and record only the data needed for the demo. TLS and per-device authorization are required before an internet-exposed deployment; the private-LAN prototype remains a controlled demonstration.
+
+The AHT20 reports the air temperature and relative humidity near its mounting position, not a worker's core body temperature. It does not establish heat illness or workplace safety. Sensor position, sunlight, enclosure heat, and calibration affect readings. If body-temperature measurement is requested, treat it as a separate sensor and validation decision, not a feature of the ordered AHT20.
+
+**Location:** no GNSS/GPS module was included in the reported order, and neither the current software nor hardware can provide GPS coordinates. The first multi-worker UI may use an operator-assigned site/zone label as manually entered information, with an update time and clear manual provenance. This is not automatic tracking. GPS, indoor positioning, hardware choice, costs, privacy, permissions, and accuracy are separate decisions; never fabricate coordinates or a live location.
 
 Firmware reads sensors, handles button debounce, and runs local alarm logic. It emits explicit SOS and sudden-motion events; Java uses those events to create incidents. Java evaluates environmental incident rules from readings and stores their evidence. Both sides use the same agreed threshold configuration, but only Java manages operator incident states.
 
@@ -44,7 +54,7 @@ Local alarms must not depend on broker availability, Java uptime, or a database 
 | Input/output adapters | MQTT, serial, simulation, replay, SQLite repositories | UI state |
 | UI | Status cards, trend views, incident filters, operator actions | MQTT parsing or handwritten SQL |
 
-The implementation can begin as one Maven application with packages for these boundaries. Separate deployable services are unnecessary for the first device. Freeze small interfaces before splitting work among members.
+The current prototype is one Maven desktop application. A future service/client split should retain these boundaries: server-side ingestion/rules/storage and a dashboard connected through a reviewed API. First prove multiple labeled simulated sources within the existing app; then extract the service and add remote-dashboard communication. Freeze small interfaces before splitting work among members.
 
 Proposed folders after S01/S02:
 
@@ -57,7 +67,7 @@ docs/           Design, roadmap, team plan, and verification instructions
 evidence/       Sanitized measurements and screenshots after testing
 ```
 
-Only `docs/` and the repository planning files exist initially. Add the other folders when they have useful content.
+The `desktop/` prototype now exists. Firmware, broker configuration, shared fixtures, and physical evidence remain to be implemented.
 
 ## Message handling
 
@@ -91,6 +101,7 @@ Treat a device as stale when valid live readings have not arrived for 5 seconds,
 | Table | Purpose and important constraints |
 | --- | --- |
 | `devices` | Stable fictional device ID and display name; no worker personal data needed |
+| `workers` and `helmet_assignments` | Demo worker identity and time-bounded helmet assignment; historical incidents retain the assignment active when recorded |
 | `sessions` | Device ID and boot ID; separate reconnects from firmware restarts |
 | `readings` | Sample values, sensor health, receive time, uptime, source mode; unique device/boot/sequence tuple |
 | `source_events` | Unique hardware event identity, event type, payload, and commit time |
@@ -117,7 +128,7 @@ In the baseline, remote delivery of events generated during a network outage is 
 
 ## Configuration and access
 
-Start on a private demonstration LAN with an authenticated local broker. Keep Wi-Fi credentials and broker passwords in ignored local configuration. TLS and per-device topic permissions are a later milestone, so the baseline is not an internet-exposed service.
+Start on a private demonstration LAN with an authenticated local broker and a restricted service/dashboard connection. Keep Wi-Fi credentials and broker passwords in ignored local configuration. Implement TLS and per-device topic permissions before internet exposure; neither is implemented yet. Avoid retaining personal and location data beyond what is needed for the project.
 
 Java may send a versioned configuration command. Firmware validates supported values and replies with the accepted version or a rejection. Document both sides' defaults. Do not assume a setting took effect just because MQTT accepted its publication.
 

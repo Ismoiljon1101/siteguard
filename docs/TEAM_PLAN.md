@@ -42,7 +42,7 @@ If a task is blocked, state what is needed and identify independent work that ca
 
 ## Scope decisions
 
-Baseline work comes before offline event replay, multiple simulated devices, or TLS/topic permissions. Ismoiljon may defer extensions to protect the Week 15 demonstration. Completing work in Week 16 requires the instructor's permission.
+The TL has clarified that multi-worker monitoring is part of the target system: demonstrate multiple labeled simulated helmets plus one physical helmet within the course budget. A central Java service and worker/helmet assignments are planned; neither is implemented yet. Offline event replay, GPS, and production deployment are separate decisions. TLS and per-device topic permissions are required before internet exposure. Ismoiljon may defer extensions to protect the Week 15 demonstration. Completing work in Week 16 requires the instructor's permission.
 
 If the team changes the baseline, update the proposal separately where required, along with the roadmap, protocol, and test plan. Do not report a planned feature as completed.
 

@@ -1,6 +1,6 @@
 # Delivery roadmap
 
-All tasks start as **planned**. The initial repository contains documentation only. Work proceeds by completion gates, not by invented dates; the course presentation target is Week 15.
+All task gates remain **unaccepted**. An early Java simulation prototype exists; see [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md). Work proceeds by completion gates, not by invented dates; the course presentation target is Week 15.
 
 Use [BUILD_STAGES.md](BUILD_STAGES.md) to execute these roadmap tasks as smaller AI-agent assignments. Its A00-A16 cards specify dependencies, allowed files, checks, and human acceptance. Use [AGENT_TASK_TEMPLATE.md](AGENT_TASK_TEMPLATE.md) for each assignment; the S00-S13 tasks below remain the milestone-level plan.
 
@@ -11,9 +11,9 @@ Ismoiljon is TL and the temporary owner of unfilled third-member tasks. The team
 | Milestone | Demonstration required | Tasks |
 | --- | --- | --- |
 | M0: agree on the plan | Confirm ownership and roster; approve protocol v1 and exact parts | S00 |
-| M1: first working path | Simulated reading reaches the Java UI; ESP32 independently reads sensors and triggers SOS | S01-S03 |
+| M1: first working path | Multiple labeled simulated helmets reach a site overview; one ESP32 independently reads sensors and triggers SOS | S01-S03B |
 | M2: wired integration | A physical SOS becomes a saved incident with acknowledgement and resolution | S04-S06 |
-| M3: wireless system | Same behavior over MQTT; portable local alarms and visible connection loss | S07-S09 |
+| M3: wireless system | Central Java service and multi-worker dashboard over MQTT; portable local alarms and visible connection loss | S07-S09, S07B |
 | M4: presentation release | Reproducible tests, screenshots, report, and live demo | S10-S12 |
 | M5: optional extensions | Demonstrate each chosen extension and its limits | S13 |
 
@@ -25,10 +25,12 @@ Ismoiljon is TL and the temporary owner of unfilled third-member tasks. The team
 | S01 | Scaffold the Java application | Ismoiljon | Protocol discussion in S00 | Maven wrapper, supported JDK, Swing shell, test runner, and CI instructions are committed; a clean checkout builds and tests. |
 | S02 | Bring up the ESP32 and sensors | Jakhongir | Parts selection in S00 | Record exact board/toolchain, pin map, and wiring; read both sensors over serial; test buzzer, LEDs, and debounced SOS without Java. |
 | S03 | Build domain types and simulator | Ismoiljon; proposed third-member handoff | S01 | Typed readings/events, input interface, and deterministic normal/warning/fault scenarios feed the same processing pipeline. |
+| S03B | Add multi-worker simulation and assignments | Ismoiljon | S03 and integrated app | At least ten labeled synthetic helmet identities have independent readings, faults, assignments, and incident histories; no physical fleet claim. |
 | S04 | Implement the serial protocol | Ismoiljon + Jakhongir | S01, S02; protocol v1 frozen | Java parses bounded JSON lines, validates payloads, and displays the physical device; malformed lines and reconnects are tested. |
 | S05 | Add incident storage and state transitions | Ismoiljon; proposed third-member handoff | S03 | SQLite migration and repository layer store deduplicated source events, incidents, and action history; transitions survive restart. |
 | S06 | Complete the wired dashboard | Ismoiljon | S04, S05 | Physical SOS creates one incident; an operator can acknowledge, add a note, resolve, filter, and export; UI remains responsive. |
 | S07 | Add MQTT and local broker setup | Jakhongir: publisher; Ismoiljon: Java adapter | S06 | Document a private LAN broker with credentials; physical events and durable Java receipts work over MQTT; chosen firmware client supports the agreed publish QoS. |
+| S07B | Build central Java site service and dashboard connection | Ismoiljon | S03B, S07 | Separate service and Swing client show independent workers/helmets and protect incident actions; API and access checks are tested on a private LAN. |
 | S08 | Handle stale devices, faults, and recovery | Ismoiljon + Jakhongir | S07 | Stale data is visibly marked, invalid data is rejected, reconnects do not duplicate incidents, and local SOS still works during an outage. |
 | S09 | Mount and power the prototype | Jakhongir | S02, S07 | Electronics are enclosed with strain relief and removable mounting; power-bank behavior and an unworn motion demonstration are checked. |
 | S10 | Add trends, replay, and CSV export checks | Ismoiljon; proposed third-member handoff | S05, S06 | Trend history uses stored samples; recorded replay exercises rules without operating a live helmet; CSV rows match saved incidents. |
@@ -42,7 +44,7 @@ S01 and S02 can proceed independently after the protocol and parts discussions. 
 
 ### M1: first working path
 
-The Java app receives a deterministic simulated reading and keeps the UI responsive. Independently, the ESP32 reports valid sensor data and triggers a local SOS alarm. This proves both sides can be developed before they are integrated.
+The Java app handles multiple labeled simulated helmets independently and keeps the UI responsive. Independently, one ESP32 reports valid sensor data and triggers a local SOS alarm. This proves both sides can be developed before they are integrated.
 
 ### M2: wired integration
 
@@ -50,7 +52,7 @@ Connect the actual helmet. Trigger SOS, observe one incident in Java, acknowledg
 
 ### M3: wireless system
 
-Repeat M2 over a local MQTT broker. Disconnect the network and show both the stale/disconnected UI and the working local SOS. Reconnect and confirm new events are handled. Historical event delivery during an outage is not a baseline guarantee.
+Repeat M2 over a local MQTT broker and central Java service, with the physical helmet alongside labeled simulated workers. Disconnect the network and show both the stale/disconnected UI and the working local SOS. Reconnect and confirm new events are handled. Historical event delivery during an outage is not a baseline guarantee.
 
 ### M4: release
 
@@ -59,7 +61,7 @@ Use [TEST_PLAN.md](TEST_PLAN.md) to record pass/fail results. Report missed late
 ## Optional work, after the release gate
 
 - A bounded offline event queue with replay and Java receipts. Specify its capacity, overflow policy, and behavior after power loss.
-- Ten clearly labeled simulated device identities, including collisions, reconnects, and independent incident histories.
+- Verified deployment-scale capacity beyond the initial ten-device simulation test.
 - TLS and per-device topic permissions, with a reproducible certificate setup and rejected-access tests.
 
 ## Before course submission
