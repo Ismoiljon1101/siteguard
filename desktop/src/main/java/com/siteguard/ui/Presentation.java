@@ -91,7 +91,7 @@ public final class Presentation {
         return switch (t) {
             case SOS -> "SOS";
             case MOTION -> "Motion";
-            case ENVIRONMENT -> TEMP_LABEL;
+            case ENVIRONMENT -> "Environment warning";
         };
     }
 

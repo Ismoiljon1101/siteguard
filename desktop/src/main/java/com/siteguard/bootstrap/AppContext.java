@@ -15,6 +15,7 @@ import com.siteguard.application.service.OperatorSeedService;
 import com.siteguard.application.service.PasswordHasher;
 import com.siteguard.application.service.SiteQueryService;
 import com.siteguard.domain.Device;
+import com.siteguard.domain.IncidentType;
 import com.siteguard.domain.Site;
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -52,7 +53,10 @@ public final class AppContext implements AutoCloseable {
         this.auth = new AuthService(store, clock, hasher);
         this.demoSiteId = demoSiteId;
         this.firstRunCredentials = firstRun;
-        this.simulation = new SimulationRunner(new FleetSimulator(simulatedHelmets, Long.toHexString(clock.millis())),
+        // Scripted demo events fire only when the helmet has no unresolved incident of that type (survives restarts).
+        FleetSimulator.ScriptGate gate = (deviceId, type) ->
+                !store.read(r -> r.incidents().hasUnresolved(deviceId, IncidentType.fromEvent(type)));
+        this.simulation = new SimulationRunner(new FleetSimulator(simulatedHelmets, Long.toHexString(clock.millis()), gate),
                 ingest, health, incidents, () -> Long.toHexString(clock.millis()));
     }
 

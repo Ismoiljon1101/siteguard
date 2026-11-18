@@ -17,6 +17,10 @@ import java.util.Objects;
 public final class FleetSimulator {
     public record Frame(String deviceId, TelemetryReading reading, List<DeviceEvent> events) { }
 
+    /** Decides whether a scripted demo event may fire for a helmet. False suppresses it for that tick. */
+    @FunctionalInterface
+    public interface ScriptGate { boolean allow(String deviceId, EventType type); }
+
     private static final class State {
         final int index;
         HelmetScenario scenario;
@@ -29,11 +33,17 @@ public final class FleetSimulator {
 
     private final Map<String, State> states = new LinkedHashMap<>();
     private String runId;
+    private final ScriptGate gate;
 
     public FleetSimulator(List<String> deviceIds, String runId) {
+        this(deviceIds, runId, (deviceId, type) -> true);
+    }
+
+    public FleetSimulator(List<String> deviceIds, String runId, ScriptGate gate) {
         int i = 0;
         for (String id : deviceIds) states.put(id, new State(i++, demoScenario(id)));
         this.runId = Objects.requireNonNull(runId);
+        this.gate = Objects.requireNonNull(gate);
     }
 
     /** Default demo script by helmet number: SIM-007 warning, 008 SOS, 009 motion, 010 sensor fault, 011 stopped, others normal. */
@@ -101,8 +111,8 @@ public final class FleetSimulator {
             TelemetryReading reading = new TelemetryReading(id, boot, s.sequence++, uptime, true, temperature, humidity,
                     new Acceleration(0.1, 0.0, 9.8));
             List<EventType> types = new ArrayList<>();
-            if (s.scenario == HelmetScenario.SOS && s.scenarioTick == 5) types.add(EventType.SOS);
-            if (s.scenario == HelmetScenario.MOTION && s.scenarioTick == 8) types.add(EventType.MOTION);
+            if (s.scenario == HelmetScenario.SOS && s.scenarioTick == 5 && gate.allow(id, EventType.SOS)) types.add(EventType.SOS);
+            if (s.scenario == HelmetScenario.MOTION && s.scenarioTick == 8 && gate.allow(id, EventType.MOTION)) types.add(EventType.MOTION);
             types.addAll(s.pending);
             s.pending.clear();
             List<DeviceEvent> events = new ArrayList<>();
