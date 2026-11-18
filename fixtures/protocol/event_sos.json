@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "kind": "event",
+  "device_id": "helmet-001",
+  "boot_id": "demo-boot-a",
+  "seq": 12,
+  "uptime_ms": 12420,
+  "simulated": true,
+  "event_type": "SOS"
+}

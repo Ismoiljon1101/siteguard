@@ -14,9 +14,11 @@ import java.util.Objects;
 /** JDBC storage. Call these blocking methods from a worker, never Swing's event thread. */
 public final class SqliteIncidentRepository {
     private final String url;
+    private final SqliteDatabase database;
 
     public SqliteIncidentRepository(Path database) {
         url = "jdbc:sqlite:" + Objects.requireNonNull(database).toAbsolutePath();
+        this.database = new SqliteDatabase(database);
     }
 
     private Connection open() throws SQLException {
@@ -31,38 +33,27 @@ public final class SqliteIncidentRepository {
         return connection;
     }
 
-    /** Apply migration 1 atomically; reject databases created by a newer version. */
+    /** Apply all numbered migrations (see Migrations). Rejects databases created by a newer version. */
     public void initialize() throws SQLException {
-        try (Connection connection = open()) {
-            connection.setAutoCommit(false);
-            try (Statement statement = connection.createStatement()) {
-                int version;
-                try (ResultSet result = statement.executeQuery("PRAGMA user_version")) {
-                    version = result.next() ? result.getInt(1) : 0;
-                }
-                if (version > 2) throw new SQLException("Unsupported database version: " + version);
-                if (version == 0) {
-                    statement.executeUpdate("CREATE TABLE incidents (source_identity TEXT PRIMARY KEY, type TEXT NOT NULL, severity TEXT NOT NULL, device_id TEXT NOT NULL, state TEXT NOT NULL, occurred_at TEXT NOT NULL, source_mode TEXT NOT NULL)");
-                    statement.executeUpdate("CREATE TABLE incident_actions (id INTEGER PRIMARY KEY, source_identity TEXT NOT NULL REFERENCES incidents(source_identity), state TEXT NOT NULL, recorded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)");
-                    statement.execute("PRAGMA user_version = 1");
-                }
-                if (version < 2) {
-                    statement.executeUpdate("ALTER TABLE incident_actions ADD COLUMN operator TEXT NOT NULL DEFAULT ''");
-                    statement.executeUpdate("ALTER TABLE incident_actions ADD COLUMN note TEXT");
-                    statement.execute("PRAGMA user_version = 2");
-                }
-                connection.commit();
-            } catch (SQLException e) {
-                connection.rollback();
-                throw e;
-            }
+        try {
+            Migrator.migrate(database);
+        } catch (com.siteguard.application.port.StorageException e) {
+            if (e.getCause() instanceof SQLException sql) throw sql;
+            throw new SQLException(e.getMessage(), e);
         }
     }
 
     /** Insert once per source identity. Returns false when the identity already exists. */
     public boolean save(IncidentRecord incident) throws SQLException {
         Objects.requireNonNull(incident);
-        try (Connection connection = open(); PreparedStatement statement = connection.prepareStatement(
+        try (Connection connection = open()) {
+            Migrations.ensureLegacyDevice(connection, incident.deviceId());
+            return insertIncident(connection, incident);
+        }
+    }
+
+    private boolean insertIncident(Connection connection, IncidentRecord incident) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(
                 "INSERT INTO incidents(source_identity,type,severity,device_id,state,occurred_at,source_mode) VALUES(?,?,?,?,?,?,?) ON CONFLICT(source_identity) DO NOTHING")) {
             statement.setString(1, incident.sourceIdentity());
             statement.setString(2, incident.type());

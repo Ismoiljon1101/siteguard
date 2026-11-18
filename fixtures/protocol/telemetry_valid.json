@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "kind": "telemetry",
+  "device_id": "helmet-001",
+  "boot_id": "demo-boot-a",
+  "seq": 10,
+  "uptime_ms": 10000,
+  "simulated": true,
+  "temperature_c": 27.4,
+  "humidity_pct": 58.2,
+  "accel_mps2": {"x": 0.1, "y": 0.0, "z": 9.8},
+  "sensor_status": {"environment": "ok", "motion": "ok"}
+}
