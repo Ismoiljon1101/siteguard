@@ -1,0 +1,23 @@
+# SiteGuard demo replay (SYNTHETIC data, made by hand, not a hardware capture)
+# Format: see README.md. One line is played per second.
+# helmet-R1 warms up past 35 C for 3 readings -> one High temperature incident
+# then one malformed line, one duplicate, an SOS, and a sensor fault.
+T,helmet-R1,replay-a,1,1000,1,27.1,55.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,2,2000,1,28.0,55.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,3,3000,1,30.4,55.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,4,4000,1,33.2,55.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,5,5000,1,35.0,55.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,6,6000,1,36.1,55.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,7,7000,1,36.8,55.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,8,8000,1,37.2,55.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,9,9000,1,36.5,55.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,oops,1000,1,27,50,0,0,9.8,ok,ok
+T,helmet-R1,replay-a,9,9000,1,36.5,55.0,0.1,0.0,9.8,ok,ok
+E,helmet-R1,replay-a,10,9400,1,SOS
+T,helmet-R1,replay-a,11,10400,1,33.0,56.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,12,11400,1,31.5,56.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,13,12400,1,NA,NA,0.1,0.0,9.8,fault,ok
+T,helmet-R1,replay-a,14,13400,1,NA,NA,0.1,0.0,9.8,fault,ok
+T,helmet-R1,replay-a,15,14400,1,NA,NA,0.1,0.0,9.8,fault,ok
+T,helmet-R1,replay-a,16,15400,1,29.0,54.0,0.1,0.0,9.8,ok,ok
+T,helmet-R1,replay-a,17,16400,1,28.4,54.0,0.1,0.0,9.8,ok,ok

@@ -8,6 +8,10 @@ SiteGuard targets a construction site with multiple workers and helmets. Each he
 
 The team lead reports ordering the [November 14 hardware selection](docs/SHOPPING_LIST.md): ESP32-S3 N16R8, AHT20/BMP280, LIS3DH, an active buzzer, and an external PBS-33B SOS button. The last reviewed checkout was KRW 40,142 with free shipping against a KRW 100,000 budget; the charged amount and delivery remain unverified. One spare ESP32 and one spare LIS3DH are included. Use owned/borrowed tools and verify the received clone's pinout before assembly. Ordering does not demonstrate a working feature.
 
+## Course application
+
+The [course application](course/README.md) is the Java version built only from lecture topics. It compiles with plain `javac` and runs with `course/run.bat`.
+
 ## Project plan
 
 | Document | What it covers |
